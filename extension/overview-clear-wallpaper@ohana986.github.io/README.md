@@ -29,7 +29,7 @@ overviewGroup
 ## 目录
 
 ```text
-extension/overview-clear@local/
+extension/overview-clear-wallpaper@ohana986.github.io/
 ├── metadata.json
 ├── extension.js
 ├── prefs.js                # 设置界面（Adw）
@@ -132,22 +132,22 @@ sudo dnf install mutter-devkit
 在项目内以普通桌面用户运行安装脚本，不要使用 sudo：
 
 ```bash
-cd extension/overview-clear@local
+cd extension/overview-clear-wallpaper@ohana986.github.io
 ./install.sh
 ```
 
 脚本会：
 
-- 把 `metadata.json`、`extension.js`、`prefs.js`、`stylesheet.css`、`lib/*.js`、`schemas/*.gschema.xml`、`README.md` 复制到 `${XDG_DATA_HOME:-$HOME/.local/share}/gnome-shell/extensions/overview-clear@local`；
+- 把 `metadata.json`、`extension.js`、`prefs.js`、`stylesheet.css`、`lib/*.js`、`schemas/*.gschema.xml`、`README.md` 复制到 `${XDG_DATA_HOME:-$HOME/.local/share}/gnome-shell/extensions/overview-clear-wallpaper@ohana986.github.io`；
 - 在目标目录里运行 `glib-compile-schemas --strict schemas`，生成 `gschemas.compiled`，供扩展和设置页读取；
-- 如果已有安装，先移动到同目录下带时间戳的 `.bak` 目录；
-- 调用 `gnome-extensions enable overview-clear@local` 并打印扩展状态；
+- 如果已有安装，先删除目标目录里的旧 `lib/*.js` 与 `schemas/*.gschema.xml`，再复制新文件；不生成备份目录；
+- 调用 `gnome-extensions enable overview-clear-wallpaper@ohana986.github.io` 并打印扩展状态；
 - 不修改 Blur My Shell 或其他扩展。
 
 `schemas/` 目录必须复制，并在目标目录里执行一次：
 
 ```bash
-glib-compile-schemas ~/.local/share/gnome-shell/extensions/overview-clear@local/schemas
+glib-compile-schemas ~/.local/share/gnome-shell/extensions/overview-clear-wallpaper@ohana986.github.io/schemas
 ```
 
 否则设置页不可用，`app-grid-native-wallpaper` 会按开启处理，扩展其余功能不受影响。
@@ -155,7 +155,7 @@ glib-compile-schemas ~/.local/share/gnome-shell/extensions/overview-clear@local/
 Wayland 会话不能只重启 GNOME Shell。如果安装后状态不是 `ENABLED`，注销并重新登录，然后执行：
 
 ```bash
-gnome-extensions enable overview-clear@local
+gnome-extensions enable overview-clear-wallpaper@ohana986.github.io
 ```
 
 卸载：
@@ -167,8 +167,8 @@ gnome-extensions enable overview-clear@local
 或者手动：
 
 ```bash
-gnome-extensions disable overview-clear@local
-rm -rf ~/.local/share/gnome-shell/extensions/overview-clear@local
+gnome-extensions disable overview-clear-wallpaper@ohana986.github.io
+rm -rf ~/.local/share/gnome-shell/extensions/overview-clear-wallpaper@ohana986.github.io
 ```
 
 ## 设置
@@ -176,7 +176,7 @@ rm -rf ~/.local/share/gnome-shell/extensions/overview-clear@local
 扩展提供一个设置页：
 
 ```bash
-gnome-extensions prefs overview-clear@local
+gnome-extensions prefs overview-clear-wallpaper@ohana986.github.io
 ```
 
 也可以打开“扩展”应用，选择本扩展后点击齿轮按钮。
@@ -198,7 +198,7 @@ gnome-extensions prefs overview-clear@local
 ### 无头自动验证（推荐先跑）
 
 ```bash
-cd extension/overview-clear@local
+cd extension/overview-clear-wallpaper@ohana986.github.io
 ./test/eval-nested.sh
 ```
 
@@ -251,7 +251,7 @@ BMS_SRC=/nonexistent ./test/eval-nested.sh
 ### 粗略性能对比
 
 ```bash
-cd extension/overview-clear@local
+cd extension/overview-clear-wallpaper@ohana986.github.io
 ./test/perf-nested.sh
 ```
 
@@ -260,7 +260,7 @@ cd extension/overview-clear@local
 ### 交互式嵌套（需要 mutter-devkit）
 
 ```bash
-cd extension/overview-clear@local
+cd extension/overview-clear-wallpaper@ohana986.github.io
 ./test/run-nested.sh
 ```
 
@@ -329,3 +329,7 @@ const actor = bg._bgManager.backgroundActor;
 - 工作区切换动画（`WorkspaceAnimationController`）不在本扩展的范围内。
 - 多显示器、分数缩放、显示器热插拔已按代码路径处理，但只在单显示器 1x 的无头环境中做了截图验证，建议在实际多屏环境再测。
 - 圆角半径来自 Blur My Shell 的 `workspace-corner-radius`，没有 Blur My Shell 时使用 30。
+
+## 许可
+
+本项目使用 GPL-2.0-or-later 许可证，完整文本见仓库根目录的 `LICENSE`。

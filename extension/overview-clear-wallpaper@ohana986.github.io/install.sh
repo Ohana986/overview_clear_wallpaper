@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-# Install overview-clear@local into the current user's GNOME Shell extension
-# directory. Run this as your normal desktop user, not with sudo.
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Install overview-clear-wallpaper@ohana986.github.io into the current user's
+# GNOME Shell extension directory. Run this as your normal desktop user, not
+# with sudo.
 #
 # Usage:
 #   ./install.sh              install or upgrade
@@ -12,7 +14,7 @@
 set -euo pipefail
 
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-UUID="overview-clear@local"
+UUID="overview-clear-wallpaper@ohana986.github.io"
 SCHEMA_ID="org.gnome.shell.extensions.overview-clear"
 SCHEMA_FILE="$HERE/schemas/$SCHEMA_ID.gschema.xml"
 DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
@@ -63,11 +65,17 @@ fi
 
 mkdir -p -- "$EXT_ROOT"
 
+# Upgrades replace the installed files in place and recompile the schema.
+# No backup copy is created, so repeated installs cannot accumulate
+# directories next to the extension.
 if [[ -e "$DEST" ]]; then
-    BACKUP="$EXT_ROOT/$UUID.bak.$(date +%Y%m%d-%H%M%S)"
-    echo "Existing install found; moving it to:"
-    echo "  $BACKUP"
-    mv -- "$DEST" "$BACKUP"
+    echo "Existing install found; updating it in place:"
+    echo "  $DEST"
+    # Drop the files this script owns before copying: a module or schema file
+    # that a new version no longer ships would otherwise stay installed. The
+    # pattern is limited to lib/*.js and schemas/*.gschema.xml so unrelated
+    # files in the install directory are left alone.
+    rm -f -- "$DEST"/lib/*.js "$DEST"/schemas/*.gschema.xml
 fi
 
 mkdir -p -- "$DEST/lib" "$DEST/schemas"

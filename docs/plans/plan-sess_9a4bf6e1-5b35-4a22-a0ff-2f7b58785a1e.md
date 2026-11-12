@@ -41,7 +41,7 @@ Main.layoutManager.overviewGroup
 在项目工作区内创建：
 
 ```text
-extension/overview-clear@local/
+extension/overview-clear-wallpaper@ohana986.github.io/
 ├── metadata.json                 # uuid, name, shell-version ["50"]
 ├── extension.js                  # Entry，enable/disable，Manager 生命周期
 ├── lib/
@@ -62,7 +62,7 @@ extension/overview-clear@local/
 
 ### 1. 扩展骨架与嵌套测试环境
 
-- `metadata.json`：`uuid: "overview-clear@local"`，`shell-version: ["50"]`，`session-modes: ["user"]`。
+- `metadata.json`：`uuid: "overview-clear-wallpaper@ohana986.github.io"`，`shell-version: ["50"]`，`session-modes: ["user"]`。
 - `extension.js` 继承 `Extension`，`enable()` 创建 `Manager`，`disable()` 逆序清理。
 - `test/run-nested.sh`：
   - 在工作区 `.test-home/` 下创建 `XDG_DATA_HOME`、`XDG_CONFIG_HOME`、`XDG_CACHE_HOME`、`XDG_RUNTIME_DIR`；
@@ -183,7 +183,7 @@ extension/overview-clear@local/
 
 ### 嵌套会话
 
-运行 `extension/overview-clear@local/test/run-nested.sh`，在嵌套 Shell 中：
+运行 `extension/overview-clear-wallpaper@ohana986.github.io/test/run-nested.sh`，在嵌套 Shell 中：
 
 1. 只启用本扩展（BMS 关闭）：卡片内清晰壁纸、卡片外 `#222226`；确认回退。
 2. 启用 BMS（默认 `overview.blur=true`）：卡片内清晰、卡片外模糊变暗；确认层级和 1:1 对齐。

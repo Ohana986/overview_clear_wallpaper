@@ -1,8 +1,0 @@
-{
-  "uuid": "overview-clear@local",
-  "name": "Overview Clear Wallpaper",
-  "description": "Shows a sharp, screen-aligned wallpaper inside the overview workspace cards, while keeping the processed Blur My Shell wallpaper outside.",
-  "shell-version": ["50"],
-  "session-modes": ["user"],
-  "settings-schema": "org.gnome.shell.extensions.overview-clear"
-}

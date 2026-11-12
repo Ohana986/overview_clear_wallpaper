@@ -63,7 +63,7 @@
 
     try {
         const extension =
-            Main.extensionManager.lookup('overview-clear@local');
+            Main.extensionManager.lookup('overview-clear-wallpaper@ohana986.github.io');
         out.extensionState = extension?.state ?? null;
     } catch {
         out.extensionState = null;

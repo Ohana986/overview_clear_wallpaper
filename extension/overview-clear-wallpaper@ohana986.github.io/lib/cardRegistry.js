@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (C) 2026 Ohana986
+
 import Clutter from 'gi://Clutter';
 import Graphene from 'gi://Graphene';
 import St from 'gi://St';
@@ -141,6 +144,19 @@ export class CardRegistry {
     }
 
     /**
+     * Force the next update to write the rounded clip again.
+     *
+     * The shell rewrites `rounded_clip_bounds` on its own when the work areas
+     * change, and that property has no change signal we could observe. Dropping
+     * the cached bounds makes the next `_applyCrop()` re-assert the crop clip
+     * even when the computed rectangle itself did not change.
+     */
+    invalidateClip() {
+        for (const record of this._records.values())
+            record.clipBounds = null;
+    }
+
+    /**
      * @param {object} record
      * @param {boolean} force Re-apply the allocation even when the computed
      *   box equals the stored one. Used after BinLayout has reallocated the
@@ -158,16 +174,22 @@ export class CardRegistry {
         if (!monitor || group.width < 1 || group.height < 1)
             return;
 
+        // Created per call so the extension does not allocate objects while
+        // the module is being initialized.
+        const originPoint = new Graphene.Point3D({x: 0, y: 0, z: 0});
+        const bottomRightPoint = new Graphene.Point3D({x: 0, y: 0, z: 0});
+        const groupBottomRightPoint = new Graphene.Point3D({x: 0, y: 0, z: 0});
+
         let cardTopLeft, cardBottomRight, cardWidth = 0;
         try {
             const box = background.get_allocation_box();
             cardWidth = box.get_width();
             cardTopLeft = background.apply_relative_transform_to_point(
-                null, ORIGIN_POINT);
-            BOTTOM_RIGHT_POINT.x = box.get_width();
-            BOTTOM_RIGHT_POINT.y = box.get_height();
+                null, originPoint);
+            bottomRightPoint.x = box.get_width();
+            bottomRightPoint.y = box.get_height();
             cardBottomRight = background.apply_relative_transform_to_point(
-                null, BOTTOM_RIGHT_POINT);
+                null, bottomRightPoint);
         } catch {
             return;
         }
@@ -183,11 +205,11 @@ export class CardRegistry {
         let groupTopLeft, groupBottomRight;
         try {
             groupTopLeft = group.apply_relative_transform_to_point(
-                null, ORIGIN_POINT);
-            GROUP_BOTTOM_RIGHT_POINT.x = group.width;
-            GROUP_BOTTOM_RIGHT_POINT.y = group.height;
+                null, originPoint);
+            groupBottomRightPoint.x = group.width;
+            groupBottomRightPoint.y = group.height;
             groupBottomRight = group.apply_relative_transform_to_point(
-                null, GROUP_BOTTOM_RIGHT_POINT);
+                null, groupBottomRightPoint);
         } catch {
             return;
         }
@@ -248,12 +270,6 @@ export class CardRegistry {
         if (!content)
             return;
 
-        const bounds = new Graphene.Rect();
-        bounds.origin.x = x;
-        bounds.origin.y = y;
-        bounds.size.width = width;
-        bounds.size.height = height;
-
         const changed = !record.clipBounds ||
             Math.abs(record.clipX - x) > 0.01 ||
             Math.abs(record.clipY - y) > 0.01 ||
@@ -263,6 +279,14 @@ export class CardRegistry {
 
         if (!changed)
             return;
+
+        // Allocated only when the clip actually changes; this runs for every
+        // card on every animated frame.
+        const bounds = new Graphene.Rect();
+        bounds.origin.x = x;
+        bounds.origin.y = y;
+        bounds.size.width = width;
+        bounds.size.height = height;
 
         record.clipX = x;
         record.clipY = y;
@@ -371,10 +395,20 @@ export class CardRegistry {
         this._connect(record.actorSignals, actor, 'notify::allocation',
             () => this._onActorAllocation(record));
         this._connect(record.actorSignals, actor, 'destroy', () => {
-            if (record.actor === actor) {
-                record.actor = null;
-                record.content = null;
-            }
+            // A stale actor that BackgroundManager swapped out earlier:
+            // _bindActor already owns the bookkeeping for the new actor.
+            if (record.actor !== actor)
+                return;
+
+            // The current actor is being disposed, and GObject removes its
+            // signal handlers together with the object. Only the bookkeeping
+            // has to go: disconnecting the stored ids here would touch the
+            // disposed actor and log a GJS critical without removing anything.
+            record.actorSignals = [];
+            record.contentSignals = [];
+            record.clipBounds = null;
+            record.actor = null;
+            record.content = null;
         });
 
         const content = actor.content ?? null;
@@ -526,9 +560,3 @@ export class CardRegistry {
         this._records.clear();
     }
 }
-
-// Reused for geometry queries; apply_relative_transform_to_point() reads them
-// synchronously and returns new points, so sharing them is safe.
-const ORIGIN_POINT = new Graphene.Point3D({x: 0, y: 0, z: 0});
-const BOTTOM_RIGHT_POINT = new Graphene.Point3D({x: 0, y: 0, z: 0});
-const GROUP_BOTTOM_RIGHT_POINT = new Graphene.Point3D({x: 0, y: 0, z: 0});

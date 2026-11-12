@@ -2,19 +2,21 @@
 
 GNOME Shell 50 扩展的开发仓库。扩展在概览的工作区卡片内显示屏幕位置对齐、1:1 的清晰壁纸，卡片外继续显示 Blur My Shell 处理过的壁纸；没有 Blur My Shell 时，卡片外回退为深色底 `#222226`。
 
-完整的安装、原理、性能与测试说明见 [extension/overview-clear@local/README.md](extension/overview-clear@local/README.md)。
+完整的安装、原理、性能与测试说明见 [extension/overview-clear-wallpaper@ohana986.github.io/README.md](extension/overview-clear-wallpaper@ohana986.github.io/README.md)。
 
 ## 仓库结构
 
 ```text
 Overview_Clear_Wallpaper/
 ├── extension/
-│   ├── overview-clear@local/      # 主扩展：源码、schema、设置页、安装脚本、测试脚本
+│   ├── overview-clear-wallpaper@ohana986.github.io/      # 主扩展：源码、schema、设置页、安装脚本、测试脚本
 │   └── bin-opacity-demo@local/    # 早期验证卡片 _bin opacity 行为的演示扩展
 ├── archives/                      # 已安装版本的快照压缩包与校验值
 ├── docs/
 │   └── plans/                     # 设计阶段的实现计划
 ├── GNOME-50-Overview-WinKey.md    # 按下 Super 键后概览显示与渲染流程的分析笔记
+├── build.sh                       # 生成 extensions.gnome.org 上传包
+├── LICENSE                        # GPL-2.0-or-later
 └── .gitignore
 ```
 
@@ -29,14 +31,14 @@ Overview_Clear_Wallpaper/
 以普通桌面用户运行，不要使用 sudo：
 
 ```bash
-cd extension/overview-clear@local
+cd extension/overview-clear-wallpaper@ohana986.github.io
 ./install.sh
 ```
 
 安装后注销并重新登录（Wayland 会话不能单独重启 GNOME Shell），再执行：
 
 ```bash
-gnome-extensions enable overview-clear@local
+gnome-extensions enable overview-clear-wallpaper@ohana986.github.io
 ```
 
 卸载：
@@ -48,12 +50,25 @@ gnome-extensions enable overview-clear@local
 ## 测试
 
 ```bash
-cd extension/overview-clear@local
+cd extension/overview-clear-wallpaper@ohana986.github.io
 ./test/eval-nested.sh    # 无头虚拟显示器，自动截图并做像素对齐检查
 ./test/perf-nested.sh    # 对比扩展启用与禁用的 CPU 开销
 ```
 
 两个脚本都会在项目根目录创建 `.test-home*` 隔离目录，不会影响当前桌面会话。
+
+## 构建上架包
+
+```bash
+./build.sh
+```
+
+脚本会在 `dist/` 下生成 `overview-clear-wallpaper@ohana986.github.io.shell-extension.zip`，并检查 `lib/`、schema 和运行文件是否齐全。生成后可以用隔离的 `XDG_DATA_HOME` 验证安装：
+
+```bash
+XDG_DATA_HOME="$PWD/.test-home-pack/share" \
+  gnome-extensions install --force dist/overview-clear-wallpaper@ohana986.github.io.shell-extension.zip
+```
 
 ## 版本快照
 
@@ -73,4 +88,4 @@ cd extension/overview-clear@local
 
 ## 许可
 
-仓库内未附带许可证文件；如需对外发布，请先补充。
+本项目使用 GPL-2.0-or-later 许可证，完整文本见根目录的 `LICENSE`。

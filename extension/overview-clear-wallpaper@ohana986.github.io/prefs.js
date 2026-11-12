@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (C) 2026 Ohana986
+
 import Adw from 'gi://Adw';
 import Gio from 'gi://Gio';
 

@@ -5,9 +5,10 @@
 gschemas.compiled
 *.mo
 
-# 安装脚本生成的旧版备份目录
-*.bak/
-*.bak-*/
+# 上架打包产物
+.build/
+dist/
+*.shell-extension.zip
 
 # Python / Node 临时文件
 __pycache__/

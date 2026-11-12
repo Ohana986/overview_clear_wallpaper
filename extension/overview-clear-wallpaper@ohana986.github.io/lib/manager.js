@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (C) 2026 Ohana986
+
 import GLib from 'gi://GLib';
 import Meta from 'gi://Meta';
 
@@ -85,8 +88,13 @@ export class OverviewClearManager {
 
         this._connect(Main.layoutManager, 'monitors-changed',
             () => this.scheduleUpdate());
-        this._connect(global.display, 'workareas-changed',
-            () => this.scheduleUpdate());
+        this._connect(global.display, 'workareas-changed', () => {
+            // The shell also rewrites the rounded clip of every card on this
+            // signal, so the crop clip has to be written again even when the
+            // card rectangle itself is unchanged.
+            this._registry?.invalidateClip();
+            this.scheduleUpdate();
+        });
         this._connect(Main.layoutManager, 'startup-complete', () => {
             if (DEBUG)
                 console.log('[overview-clear] startup-complete');
@@ -361,7 +369,16 @@ export class OverviewClearManager {
         const wrap = (prototype, name, after) => {
             const original = prototype[name];
 
-            if (typeof original !== 'function' || original.__overviewClearWrapped)
+            if (typeof original !== 'function') {
+                // Private API changed. The overview "showing" scan still picks
+                // up existing cards, but cards created while the overview stays
+                // open would be missed, so make the failure visible.
+                console.warn(`[overview-clear] ${name}() is unavailable; ` +
+                    'dynamically created workspace cards may not be registered');
+                return;
+            }
+
+            if (original.__overviewClearWrapped)
                 return;
 
             const wrapper = function (...args) {

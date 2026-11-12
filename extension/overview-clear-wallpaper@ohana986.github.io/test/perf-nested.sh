@@ -16,7 +16,7 @@ CONFIG_HOME="$TEST_HOME/config"
 CACHE_HOME="$TEST_HOME/cache"
 LOG_FILE="$TEST_HOME/perf.log"
 
-UUID="overview-clear@local"
+UUID="overview-clear-wallpaper@ohana986.github.io"
 BMS_UUID="blur-my-shell@aunetx"
 BMS_SRC="${BMS_SRC:-$HOME/.local/share/gnome-shell/extensions/$BMS_UUID}"
 

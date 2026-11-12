@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (C) 2026 Ohana986
+
 // Shared constants for the overview clear wallpaper extension.
 
 // Fallback corner radius when Blur My Shell is not active. This matches

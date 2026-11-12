@@ -1,0 +1,9 @@
+{
+  "uuid": "overview-clear-wallpaper@ohana986.github.io",
+  "name": "Overview Clear Wallpaper",
+  "description": "Shows a sharp, screen-aligned wallpaper inside the overview workspace cards while keeping the processed Blur My Shell wallpaper outside. Blur My Shell is optional; without it the area outside the cards falls back to a dark background. The app grid can use the native wallpaper or the same sharp crop.",
+  "shell-version": ["50"],
+  "url": "https://github.com/Ohana986/overview_clear_wallpaper",
+  "version-name": "1.0.0",
+  "settings-schema": "org.gnome.shell.extensions.overview-clear"
+}

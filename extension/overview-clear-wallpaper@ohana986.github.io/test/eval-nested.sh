@@ -20,7 +20,7 @@ SHOT_FILE3="$TEST_HOME/overview-appgrid.png"
 SHOT_FILE4="$TEST_HOME/overview-disabled.png"
 SHOT_FILE5="$TEST_HOME/overview-reenabled.png"
 
-UUID="overview-clear@local"
+UUID="overview-clear-wallpaper@ohana986.github.io"
 BMS_UUID="blur-my-shell@aunetx"
 BMS_SRC="${BMS_SRC:-$HOME/.local/share/gnome-shell/extensions/$BMS_UUID}"
 

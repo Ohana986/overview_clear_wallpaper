@@ -8,7 +8,7 @@ WorkspaceBackground._bin.opacity = 0;
 
 没有清晰壁纸层，没有遮罩着色器，没有修改 Blur My Shell。它只隐藏工作区卡片自己的缩放壁纸，用来观察上一轮讨论中“单纯 `_bin.opacity = 0`”的最终效果。
 
-现有的 `extension/overview-clear@local` 保持不动，本目录是独立的最小演示。
+现有的 `extension/overview-clear-wallpaper@ohana986.github.io` 保持不动，本目录是独立的最小演示。
 
 ## 预期效果
 
