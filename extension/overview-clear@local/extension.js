@@ -1,0 +1,15 @@
+import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
+
+import {OverviewClearManager} from './lib/manager.js';
+
+export default class OverviewClearExtension extends Extension {
+    enable() {
+        this._manager = new OverviewClearManager(this);
+        this._manager.enable();
+    }
+
+    disable() {
+        this._manager?.disable();
+        this._manager = null;
+    }
+}

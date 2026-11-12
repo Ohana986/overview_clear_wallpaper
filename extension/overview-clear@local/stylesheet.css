@@ -1,0 +1,4 @@
+/*
+ * The extension no longer needs stylesheet rules: the card keeps drawing its
+ * own wallpaper, so the native card shadow is correct without suppression.
+ */

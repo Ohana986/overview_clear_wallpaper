@@ -1,0 +1,36 @@
+# 测试脚本在项目根目录生成的隔离会话与截图 (.test-home、.test-home-perf 等)
+.test-home*/
+
+# 编译产物
+gschemas.compiled
+*.mo
+
+# 安装脚本生成的旧版备份目录
+*.bak/
+*.bak-*/
+
+# Python / Node 临时文件
+__pycache__/
+*.py[cod]
+node_modules/
+
+# 编辑器与系统文件
+*~
+*.swp
+.DS_Store
+.vscode/
+.idea/
+
+# 上游参考源码：解析 GNOME Shell / Mutter 源码包得到，供查阅实现，
+# 体积大且可由 tarballs/ 重新解压，不纳入版本库
+gnome-shell-js/
+mutter-src/
+src-mutter/
+src-shell/
+
+# 上游源码压缩包 (gnome-shell-50.6.tar.xz、mutter-50.6.tar.xz)，
+# 仅在需要重新解压参考源码时使用，不纳入版本库
+tarballs/
+
+# ZCode 会话内部文件
+.zcode/

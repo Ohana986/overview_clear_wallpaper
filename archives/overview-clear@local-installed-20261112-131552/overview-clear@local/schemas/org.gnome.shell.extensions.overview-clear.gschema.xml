@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.overview-clear"
+          path="/org/gnome/shell/extensions/overview-clear/">
+    <key name="app-grid-native-wallpaper" type="b">
+      <default>true</default>
+      <summary>Use the native wallpaper in the app grid</summary>
+      <description>
+        When enabled, the application grid page uses the system's own
+        workspace card wallpaper instead of this extension's screen-aligned
+        1:1 wallpaper crop. The window picker and the rest of the overview
+        keep the crop. Disable this to also show the crop in the app grid
+        strip.
+      </description>
+    </key>
+  </schema>
+</schemalist>

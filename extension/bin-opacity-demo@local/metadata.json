@@ -1,0 +1,7 @@
+{
+  "uuid": "bin-opacity-demo@local",
+  "name": "Bin Opacity Demo",
+  "description": "Minimal demo: hides the workspace card wallpaper by setting WorkspaceBackground._bin.opacity = 0. No sharp layer, no mask, no Blur My Shell changes.",
+  "shell-version": ["50"],
+  "session-modes": ["user"]
+}
