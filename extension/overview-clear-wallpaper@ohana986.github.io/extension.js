@@ -12,7 +12,9 @@ export default class OverviewClearExtension extends Extension {
     }
 
     disable() {
-        this._manager?.disable();
-        this._manager = null;
+        if (this._manager) {
+            this._manager.disable();
+            this._manager = null;
+        }
     }
 }

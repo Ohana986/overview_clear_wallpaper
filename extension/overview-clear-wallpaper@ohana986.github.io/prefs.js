@@ -4,7 +4,10 @@
 import Adw from 'gi://Adw';
 import Gio from 'gi://Gio';
 
-import {ExtensionPreferences} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import {
+    ExtensionPreferences,
+    gettext as _,
+} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
 export default class OverviewClearPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
@@ -15,19 +18,17 @@ export default class OverviewClearPreferences extends ExtensionPreferences {
         window._settings = settings;
 
         const page = new Adw.PreferencesPage({
-            title: '概览',
+            title: _('Overview'),
             icon_name: 'preferences-desktop-screensaver-symbolic',
         });
 
         const group = new Adw.PreferencesGroup({
-            title: '应用网格',
+            title: _('App Grid'),
         });
 
         const row = new Adw.SwitchRow({
-            title: '使用系统默认壁纸',
-            subtitle: '应用网格页面使用系统原生的卡片壁纸，而不是本扩展的屏幕对齐清晰壁纸。' +
-                '关闭后，应用网格顶部的窄条也会显示清晰壁纸；' +
-                '窗口选择器和概览的其他部分始终使用清晰壁纸。',
+            title: _('Use the system wallpaper'),
+            subtitle: _("The app grid uses the system's native workspace card wallpaper instead of this extension's screen-aligned sharp wallpaper. When disabled, the strip at the top of the app grid also shows the sharp wallpaper; the window picker and the rest of the overview always use it."),
         });
 
         settings.bind('app-grid-native-wallpaper', row, 'active',

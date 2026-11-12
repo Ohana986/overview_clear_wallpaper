@@ -17,7 +17,7 @@ DIST_DIR="$ROOT/dist"
 SCHEMA_ID="org.gnome.shell.extensions.overview-clear"
 SCHEMA_REL="schemas/$SCHEMA_ID.gschema.xml"
 
-for command in gnome-extensions glib-compile-schemas zipinfo; do
+for command in gnome-extensions glib-compile-schemas msgfmt zipinfo; do
     if ! command -v "$command" >/dev/null 2>&1; then
         echo "error: $command is required to build the upload package." >&2
         exit 1
@@ -32,6 +32,10 @@ for file in metadata.json extension.js prefs.js stylesheet.css "$SCHEMA_REL"; do
 done
 if [[ ! -d "$EXT_DIR/lib" ]]; then
     echo "error: missing $EXT_DIR/lib" >&2
+    exit 1
+fi
+if [[ ! -d "$EXT_DIR/po" ]]; then
+    echo "error: missing $EXT_DIR/po" >&2
     exit 1
 fi
 
@@ -50,7 +54,7 @@ cp -- "$EXT_DIR/metadata.json" \
       "$EXT_DIR/prefs.js" \
       "$EXT_DIR/stylesheet.css" \
       "$BUILD_ROOT/$UUID/"
-cp -a -- "$EXT_DIR/lib" "$EXT_DIR/schemas" "$BUILD_ROOT/$UUID/"
+cp -a -- "$EXT_DIR/lib" "$EXT_DIR/schemas" "$EXT_DIR/po" "$BUILD_ROOT/$UUID/"
 
 # Validate the schema before packaging. gnome-extensions pack includes the XML;
 # the extension installer compiles it after installation.
@@ -61,6 +65,8 @@ gnome-extensions pack "$BUILD_ROOT/$UUID" \
     --force \
     --extra-source=lib \
     --schema="$SCHEMA_REL" \
+    --podir=po \
+    --gettext-domain="$UUID" \
     --out-dir "$DIST_DIR"
 
 ZIP="$DIST_DIR/$UUID.shell-extension.zip"
@@ -80,8 +86,16 @@ if ! grep -q '^schemas/.*\.gschema\.xml$' <<<"$contents"; then
     echo "error: the GSettings schema is missing from $ZIP" >&2
     exit 1
 fi
+if ! grep -qxF -- "locale/zh_CN/LC_MESSAGES/$UUID.mo" <<<"$contents"; then
+    echo "error: the Chinese translation is missing from $ZIP" >&2
+    exit 1
+fi
 if grep -qE '^(test/|install\.sh$)' <<<"$contents"; then
     echo "error: development files leaked into $ZIP" >&2
+    exit 1
+fi
+if grep -q '\.po$' <<<"$contents"; then
+    echo "error: translation source files leaked into $ZIP" >&2
     exit 1
 fi
 

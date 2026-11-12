@@ -76,6 +76,7 @@ if [[ -e "$DEST" ]]; then
     # pattern is limited to lib/*.js and schemas/*.gschema.xml so unrelated
     # files in the install directory are left alone.
     rm -f -- "$DEST"/lib/*.js "$DEST"/schemas/*.gschema.xml
+    rm -rf -- "$DEST/locale"
 fi
 
 mkdir -p -- "$DEST/lib" "$DEST/schemas"
@@ -99,8 +100,22 @@ else
     echo "         not be available until it is installed and re-run." >&2
 fi
 
+# Compile the translation sources into the locale layout expected by
+# ExtensionPreferences. English is the source language and needs no .mo file.
+if [[ -d "$HERE/po" ]] && command -v msgfmt >/dev/null 2>&1; then
+    for po in "$HERE"/po/*.po; do
+        [[ -e "$po" ]] || continue
+        lang="$(basename -- "$po" .po)"
+        mkdir -p -- "$DEST/locale/$lang/LC_MESSAGES"
+        msgfmt --check \
+            --output-file="$DEST/locale/$lang/LC_MESSAGES/$UUID.mo" "$po"
+    done
+elif [[ -d "$HERE/po" ]]; then
+    echo "warning: msgfmt is missing; the preferences page will use English." >&2
+fi
+
 echo "Installed files:"
-find "$DEST" -maxdepth 2 -type f -printf '  %p\n' | sort
+find "$DEST" -type f -printf '  %p\n' | sort
 
 if [[ -d "$EXT_ROOT/blur-my-shell@aunetx" ]]; then
     echo "Blur My Shell: found (its overview background will be used)."

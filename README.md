@@ -63,7 +63,7 @@ cd extension/overview-clear-wallpaper@ohana986.github.io
 ./build.sh
 ```
 
-脚本会在 `dist/` 下生成 `overview-clear-wallpaper@ohana986.github.io.shell-extension.zip`，并检查 `lib/`、schema 和运行文件是否齐全。生成后可以用隔离的 `XDG_DATA_HOME` 验证安装：
+脚本会在 `dist/` 下生成 `overview-clear-wallpaper@ohana986.github.io.shell-extension.zip`，并检查 `lib/`、schema、翻译和运行文件是否齐全。`build.sh` 会编译 `po/` 中的翻译，只把 `locale/<语言>/LC_MESSAGES/<UUID>.mo` 放进 zip。生成后可以用隔离的 `XDG_DATA_HOME` 验证安装：
 
 ```bash
 XDG_DATA_HOME="$PWD/.test-home-pack/share" \
@@ -83,6 +83,8 @@ XDG_DATA_HOME="$PWD/.test-home-pack/share" \
 ## 环境要求
 
 - GNOME Shell 50.x（本机 50.6，Wayland）；
+- 不支持 GNOME Shell 51；
+- 125% 缩放和双显示器环境已初步验证正常；
 - 可选：Blur My Shell（UUID `blur-my-shell@aunetx`）；
 - 交互式嵌套测试另需 `mutter-devkit`，无头测试不需要。
 

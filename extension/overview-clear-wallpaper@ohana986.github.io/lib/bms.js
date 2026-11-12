@@ -128,13 +128,8 @@ export class BmsHelper {
 
     _disconnectSettings() {
         if (this._settings) {
-            for (const id of this._settingsSignals) {
-                try {
-                    this._settings.disconnect(id);
-                } catch {
-                    // The settings object may already be gone.
-                }
-            }
+            for (const id of this._settingsSignals)
+                this._settings.disconnect(id);
         }
 
         this._settingsSignals = [];

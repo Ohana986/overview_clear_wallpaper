@@ -35,3 +35,6 @@ tarballs/
 
 # ZCode 会话内部文件
 .zcode/
+
+# 静态分析工具虚拟环境
+.venv-shexli/

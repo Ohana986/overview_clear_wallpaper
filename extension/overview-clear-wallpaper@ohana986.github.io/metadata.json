@@ -5,5 +5,6 @@
   "shell-version": ["50"],
   "url": "https://github.com/Ohana986/overview_clear_wallpaper",
   "version-name": "1.0.0",
-  "settings-schema": "org.gnome.shell.extensions.overview-clear"
+  "settings-schema": "org.gnome.shell.extensions.overview-clear",
+  "gettext-domain": "overview-clear-wallpaper@ohana986.github.io"
 }

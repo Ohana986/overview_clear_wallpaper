@@ -31,9 +31,10 @@ import {BMS_UUID, DEBUG, DEFAULT_CORNER_RADIUS} from './constants.js';
 export class OverviewClearManager {
     constructor(extension) {
         this._extension = extension;
-        this._enabled = false;
 
         this._bms = null;
+        // Non-null while the extension is active. It doubles as the activation
+        // marker for callbacks that may still be queued during teardown.
         this._registry = null;
 
         this._connections = [];
@@ -49,10 +50,8 @@ export class OverviewClearManager {
     }
 
     enable() {
-        if (this._enabled)
+        if (this._registry)
             return;
-
-        this._enabled = true;
 
         try {
             this._enableInternal();
@@ -65,10 +64,11 @@ export class OverviewClearManager {
     }
 
     _enableInternal() {
+        this._registry = new CardRegistry(this);
+
         this._bms = new BmsHelper();
         this._bms.onChanged = () => this._onBmsChanged();
 
-        this._registry = new CardRegistry(this);
         this._initSettings();
         this._installHooks();
 
@@ -130,10 +130,8 @@ export class OverviewClearManager {
     }
 
     disable() {
-        if (!this._enabled)
+        if (!this._registry)
             return;
-
-        this._enabled = false;
 
         if (this._laterId) {
             try {
@@ -150,8 +148,9 @@ export class OverviewClearManager {
 
         this._restoreHooks();
 
-        this._registry?.destroy();
+        const registry = this._registry;
         this._registry = null;
+        registry.destroy();
 
         this._bms?.destroy();
         this._bms = null;
@@ -195,13 +194,8 @@ export class OverviewClearManager {
     }
 
     _disconnectSettings() {
-        if (this._settings && this._settingsId) {
-            try {
-                this._settings.disconnect(this._settingsId);
-            } catch {
-                // Settings object may already be disposed.
-            }
-        }
+        if (this._settings && this._settingsId)
+            this._settings.disconnect(this._settingsId);
 
         this._settingsId = 0;
         this._settings = null;
@@ -259,7 +253,7 @@ export class OverviewClearManager {
     }
 
     _onBmsChanged() {
-        if (!this._enabled)
+        if (!this._registry)
             return;
 
         this._bms?.refresh();
@@ -322,19 +316,14 @@ export class OverviewClearManager {
     }
 
     _disconnectAll() {
-        for (const [object, id] of this._connections) {
-            try {
-                object.disconnect(id);
-            } catch {
-                // Object may be gone already.
-            }
-        }
+        for (const [object, id] of this._connections)
+            object.disconnect(id);
 
         this._connections = [];
     }
 
     scheduleUpdate() {
-        if (!this._enabled)
+        if (!this._registry)
             return;
 
         if (this._laterId)
@@ -349,7 +338,7 @@ export class OverviewClearManager {
     }
 
     _update() {
-        if (!this._enabled)
+        if (!this._registry)
             return;
 
         const nativeAmount = this._getAppGridNativeAmount();

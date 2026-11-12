@@ -37,6 +37,9 @@ extension/overview-clear-wallpaper@ohana986.github.io/
 ├── install.sh              # 安装到当前用户的扩展目录 / 卸载
 ├── schemas/
 │   └── org.gnome.shell.extensions.overview-clear.gschema.xml
+├── po/
+│   ├── POTFILES.in
+│   └── zh_CN.po
 ├── lib/
 │   ├── constants.js        # 默认圆角、调试开关、Blur My Shell 标识
 │   ├── bms.js              # Blur My Shell 检测、设置读取
@@ -119,6 +122,7 @@ BinLayout 每次重新分配 actor 时都会把它改回卡片大小。扩展监
 
 - GNOME Shell 50.x（本机 50.6，Wayland）。
 - 可选：Blur My Shell（UUID `blur-my-shell@aunetx`）。没有它也能工作，只是卡片外是深色底。
+- 构建翻译需要 GNU gettext 的 `msgfmt`；运行时只使用编译后的 `.mo` 文件。
 - 交互式嵌套测试需要 `mutter-devkit`：
 
 ```bash
@@ -186,6 +190,8 @@ gnome-extensions prefs overview-clear-wallpaper@ohana986.github.io
 - **应用网格使用系统默认壁纸**（键名 `app-grid-native-wallpaper`，默认开启）：
   - 开启时，应用网格顶部的窄条恢复系统原生行为，每个工作区卡片显示自己的缩放壁纸，卡片自身的圆角和阴影也按原生方式呈现。
   - 关闭时，应用网格顶部窄条继续使用本扩展的 1:1 壁纸裁剪。
+
+设置页使用 gettext 并跟随系统语言。源字符串是英文；`po/zh_CN.po` 提供简体中文，`install.sh` 和 `build.sh` 会把它编译为 `locale/zh_CN/LC_MESSAGES/<UUID>.mo`。系统语言不是中文时回退到英文。
 
 作用范围与行为：
 
@@ -321,13 +327,13 @@ const actor = bg._bgManager.backgroundActor;
 
 ## 已知限制
 
-- 依赖 GNOME Shell 私有 API（`_bin`、`_backgroundGroup`、`_bgManager`、`_updateBorderRadius`、`_updateRoundedClipBounds`、`_stateAdjustment` 等），目前只针对 Shell 50.x。
+- 依赖 GNOME Shell 私有 API（`_bin`、`_backgroundGroup`、`_bgManager`、`_updateBorderRadius`、`_updateRoundedClipBounds`、`_stateAdjustment` 等），目前只针对 Shell 50.x，不支持 Shell 51。
 - 壁纸是屏幕空间 1:1 裁剪，卡片内的壁纸与缩放后的窗口不再保持原来的空间对应。
 - 进入应用网格的最后一刻会从 1:1 裁剪切换为原生缩放壁纸；离开应用网格时第一帧恢复裁剪。旧版本的交叉淡化已移除。
 - 壁纸更换时 BackgroundManager 会短暂交叉淡化新旧 actor。旧 actor 不在扩展的控制范围内，如果正好在概览打开时更换壁纸，可能看到很短的未裁剪缩略图。
 - Blur My Shell 关闭时只回退深色底，不自己实现模糊层。
 - 工作区切换动画（`WorkspaceAnimationController`）不在本扩展的范围内。
-- 多显示器、分数缩放、显示器热插拔已按代码路径处理，但只在单显示器 1x 的无头环境中做了截图验证，建议在实际多屏环境再测。
+- 多显示器和 125% 分数缩放已在真实环境初步验证正常；其他缩放比例、显示器热插拔和混合缩放仍建议复测。
 - 圆角半径来自 Blur My Shell 的 `workspace-corner-radius`，没有 Blur My Shell 时使用 30。
 
 ## 许可

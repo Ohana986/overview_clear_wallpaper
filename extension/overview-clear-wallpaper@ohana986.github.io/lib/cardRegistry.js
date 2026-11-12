@@ -26,7 +26,6 @@ export class CardRegistry {
     constructor(manager) {
         this._manager = manager;
         this._records = new Map();
-        this._enabled = true;
         // True while the window picker should show the 1:1 crop. False means
         // the native card wallpaper is in charge (app grid, setting off).
         this._crop = false;
@@ -41,7 +40,7 @@ export class CardRegistry {
     }
 
     register(background) {
-        if (!this._enabled || !background)
+        if (!this._records || !background)
             return;
 
         let record = this._records.get(background);
@@ -79,7 +78,7 @@ export class CardRegistry {
     }
 
     scan() {
-        if (!this._enabled)
+        if (!this._records)
             return;
 
         const overviewGroup = Main.layoutManager.overviewGroup;
@@ -114,6 +113,9 @@ export class CardRegistry {
      * @param {number} amount 0 = sharp crop, 1 = native app grid wallpaper
      */
     setNativeAmount(amount) {
+        if (!this._records)
+            return;
+
         const crop = amount < 1;
         if (crop === this._crop)
             return;
@@ -133,7 +135,7 @@ export class CardRegistry {
      * while the overview animates.
      */
     update() {
-        if (!this._enabled || !this._crop)
+        if (!this._records || !this._crop)
             return;
 
         this._scaleFactor =
@@ -152,6 +154,9 @@ export class CardRegistry {
      * even when the computed rectangle itself did not change.
      */
     invalidateClip() {
+        if (!this._records)
+            return;
+
         for (const record of this._records.values())
             record.clipBounds = null;
     }
@@ -357,7 +362,7 @@ export class CardRegistry {
         this._connect(record.signals, background, 'destroy', () => {
             this._disconnectAll(record);
             this._disconnectParent(record);
-            this._records.delete(background);
+            this._records?.delete(background);
             this._manager.scheduleUpdate();
         });
     }
@@ -549,7 +554,8 @@ export class CardRegistry {
     }
 
     destroy() {
-        this._enabled = false;
+        if (!this._records)
+            return;
 
         for (const record of this._records.values()) {
             this._disconnectAll(record);
@@ -557,6 +563,6 @@ export class CardRegistry {
             this._restoreNative(record);
         }
 
-        this._records.clear();
+        this._records = null;
     }
 }
