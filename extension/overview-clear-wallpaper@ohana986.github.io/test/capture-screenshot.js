@@ -36,6 +36,8 @@
                 : index === 31 ? 'overview-scroll-mid.png'
                 : index === 32 ? 'overview-scroll-end.png'
                 : index === 33 ? 'overview-scroll-mid2.png'
+                : index === 34 ? 'overview-appgrid-mid.png'
+                : index === 35 ? 'overview-closing-mid.png'
                 : 'overview.png';
             const path = `${base}/${name}`;
             const file = Gio.File.new_for_path(path);

@@ -50,6 +50,7 @@ extension/overview-clear-wallpaper@ohana986.github.io/
 │   ├── eval-nested.sh      # 无头虚拟显示器 + 自动截图
 │   ├── perf-nested.sh      # 无头会话中的粗略 CPU 对比
 │   ├── capture-screenshot.js
+│   ├── capture-store-screenshots.sh  # 用真实壁纸生成商店截图
 │   ├── diagnostics.js      # 卡片、actor、裁剪状态
 │   ├── geometry.js         # 卡片 allocation / stage 变换诊断
 │   ├── disable-extension.js
@@ -253,6 +254,14 @@ BMS_SRC=/nonexistent ./test/eval-nested.sh
 ```
 
 此时卡片内应显示清晰壁纸，卡片外是 `#222226`。
+
+### 生成商店截图
+
+```bash
+./test/capture-store-screenshots.sh /path/to/wallpaper.jpg
+```
+
+脚本会调用 `eval-nested.sh`，使用指定壁纸运行无头会话，并把选中的帧转换到仓库根目录的 `screenshots/`。截图选择、观察点和可直接使用的商店描述见 [screenshots/README.md](../../screenshots/README.md)。
 
 ### 粗略性能对比
 

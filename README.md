@@ -12,6 +12,7 @@ Overview_Clear_Wallpaper/
 │   ├── overview-clear-wallpaper@ohana986.github.io/      # 主扩展：源码、schema、设置页、安装脚本、测试脚本
 │   └── bin-opacity-demo@local/    # 早期验证卡片 _bin opacity 行为的演示扩展
 ├── archives/                      # 已安装版本的快照压缩包与校验值
+├── screenshots/                   # 商店截图与功能说明
 ├── docs/
 │   └── plans/                     # 设计阶段的实现计划
 ├── GNOME-50-Overview-WinKey.md    # 按下 Super 键后概览显示与渲染流程的分析笔记
@@ -69,6 +70,17 @@ cd extension/overview-clear-wallpaper@ohana986.github.io
 XDG_DATA_HOME="$PWD/.test-home-pack/share" \
   gnome-extensions install --force dist/overview-clear-wallpaper@ohana986.github.io.shell-extension.zip
 ```
+
+## 商店截图
+
+`screenshots/` 目录包含 1920x1080 的商店截图和说明。使用真实壁纸重新生成：
+
+```bash
+cd extension/overview-clear-wallpaper@ohana986.github.io
+./test/capture-store-screenshots.sh /path/to/wallpaper.jpg
+```
+
+截图选择、观察点和可直接使用的商店描述见 [screenshots/README.md](screenshots/README.md)。当前一套截图使用 Fedora 自带的 Future City 壁纸（CC-BY-4.0，作者 Máirín Duffy），发布时应保留署名。
 
 ## 版本快照
 

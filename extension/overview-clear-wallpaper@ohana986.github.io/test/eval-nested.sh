@@ -91,8 +91,20 @@ dbus-run-session -- bash -c '
     # High-contrast 1920x1080 test pattern: color bars, grid and a large
     # number make 1:1 crops easy to verify, including the sliver of a
     # neighboring workspace card. Fall back to cat.jpg if ffmpeg is missing.
+    # Set WALLPAPER_SRC to an image path to use a real wallpaper instead,
+    # which is how the store screenshots are generated.
+    rm -f -- "$TEST_HOME"/wallpaper-test.*
     TEST_WALLPAPER="$TEST_HOME/wallpaper-test.png"
-    if command -v ffmpeg >/dev/null 2>&1; then
+    if [[ -n "${WALLPAPER_SRC:-}" ]]; then
+        if [[ ! -f "$WALLPAPER_SRC" ]]; then
+            echo "error: WALLPAPER_SRC is not a file: $WALLPAPER_SRC" >&2
+            exit 1
+        fi
+        extension="${WALLPAPER_SRC##*.}"
+        TEST_WALLPAPER="$TEST_HOME/wallpaper-test.$extension"
+        cp -- "$WALLPAPER_SRC" "$TEST_WALLPAPER"
+        WALLPAPER="file://$TEST_WALLPAPER"
+    elif command -v ffmpeg >/dev/null 2>&1; then
         ffmpeg -loglevel error -y -f lavfi \
             -i "testsrc=size=1920x1080:rate=1" -frames:v 1 "$TEST_WALLPAPER"
         WALLPAPER="file://$TEST_WALLPAPER"
@@ -172,6 +184,9 @@ dbus-run-session -- bash -c '
 
     echo "--- app grid native wallpaper (setting on, expect cropping false) ---"
     eval_js "Main.overview._overview._controls.dash.showAppsButton.checked = true; 1" || true
+    sleep 0.12
+    eval_js "globalThis.__overviewClearShotIndex = 34; 1" || true
+    eval_js "$(cat "$EVAL_JS_DIR/capture-screenshot.js")" || true
     sleep 2
     eval_js "$(cat "$EVAL_JS_DIR/diagnostics.js")" || true
     eval_js "globalThis.__overviewClearShotIndex = 10; 1" || true
@@ -217,6 +232,12 @@ dbus-run-session -- bash -c '
     eval_js "$(cat "$EVAL_JS_DIR/enable-extension.js")" || true
     sleep 2
     eval_js "$(cat "$EVAL_JS_DIR/diagnostics.js")" || true
+    eval_js "$(cat "$EVAL_JS_DIR/capture-screenshot.js")" || true
+
+    echo "--- closing animation ---"
+    eval_js "Main.overview.hide(); 1" || true
+    sleep 0.12
+    eval_js "globalThis.__overviewClearShotIndex = 35; 1" || true
     eval_js "$(cat "$EVAL_JS_DIR/capture-screenshot.js")" || true
 
     sleep 1
